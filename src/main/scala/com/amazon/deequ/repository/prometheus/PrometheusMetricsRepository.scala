@@ -42,7 +42,11 @@ class PrometheusMetricsRepository( url: String) extends MetricsRepository {
       metric match {
         case DoubleMetric(entity, name, instance, value) => {
           val keys = resultKey.tags.values.mkString("_")
-          val key = s"dq_${keys.toLowerCase}_${instance.replace("*","table").replace(",","|").toLowerCase}_${name.toLowerCase}"
+          val key = s"dq_${keys.toLowerCase}_${instance
+            .replace("*","table")
+            .replace(",","_")
+            .replace(" ", "_")
+            .toLowerCase}_${name.toLowerCase}"
           logger.debug(s"${key} ${value.get.toString}")
           pg.post(s"${key} ${value.get.toString}\n", null, "tool", "deequ")
         }
